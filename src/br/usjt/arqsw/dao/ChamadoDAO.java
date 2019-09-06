@@ -8,16 +8,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import br.usjt.arqsw.entity.Chamado;
 import br.usjt.arqsw.entity.Fila;
 
+@Repository
 public class ChamadoDAO {
-
+	private Connection conn;
+	
+	@Autowired
+	public ChamadoDAO(DataSource dataSource) throws IOException {
+		try {
+			this.conn = dataSource.getConnection();
+		} catch (SQLException e) {
+			throw new IOException(e);
+		}
+	}
+	
+	
 	public ArrayList<Chamado> listarChamado(Fila fila) throws IOException {
 		ArrayList<Chamado> lista = new ArrayList<>();
 		String query = "select id_chamado, descricao, status, dt_abertura, dt_fechamento, id_fila from chamado WHERE id_fila = ?";
-		try (Connection conn = ConnectionFactory.getConnection();
-				PreparedStatement pst = conn.prepareStatement(query);) {
+		try (PreparedStatement pst = conn.prepareStatement(query);) {
 			pst.setInt(1, fila.getId());
 			pst.execute();
 			try (ResultSet rs = pst.executeQuery();) {

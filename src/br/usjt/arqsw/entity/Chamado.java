@@ -3,9 +3,12 @@ package br.usjt.arqsw.entity;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 public class Chamado implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
+	@NotNull(message="O chamado não pode ser vazio")
 	private int idChamado;
 	private String descricao;
 	private String status;
